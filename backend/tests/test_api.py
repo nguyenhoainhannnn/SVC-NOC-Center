@@ -180,6 +180,16 @@ def test_topology_and_alert_engine():
     assert len(overloaded) == 1
     assert "55" in overloaded[0]["message"]
 
+    # Ensure offline/unreachable router & switches produce ZERO fabricated devices or edges
+    empty_resolved = build_site_topology(
+        site_id=1,
+        router_data={"host": "10.99.99.1", "is_online": False, "error": "Timeout"},
+        switches_data=[{"host": "10.99.99.2", "is_online": False, "error": "SNMP Timeout"}],
+    )
+    assert empty_resolved["devices"] == []
+    assert empty_resolved["edges"] == []
+    assert empty_resolved["ports"] == []
+
 
 def test_hikvision_isapi_and_vpn_proxy():
     sample_hdd_xml = """<?xml version="1.0" encoding="UTF-8"?>
@@ -220,7 +230,8 @@ def test_hikvision_isapi_and_vpn_proxy():
 
     assert validate_lan_target_ip("10.100.1.253") == "10.100.1.253"
     assert validate_lan_target_ip("192.168.1.250") == "192.168.1.250"
-    for blocked_ip in ("127.0.0.1", "169.254.169.254", "8.8.8.8"):
+    assert validate_lan_target_ip("14.224.195.129") == "14.224.195.129"
+    for blocked_ip in ("127.0.0.1", "169.254.169.254", "192.168.10.255"):
         try:
             validate_lan_target_ip(blocked_ip)
             assert False, f"Should have rejected {blocked_ip}"

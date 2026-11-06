@@ -77,278 +77,6 @@ const INITIAL_WAN_SERIES = [
   { time: "23:25", vnpt: 365, fpt: 205 },
 ];
 
-const FALLBACK_TOPOLOGY: {
-  nodes: Node<NocNodeData>[];
-  edges: Edge<NocEdgeData>[];
-  alerts: AlertItem[];
-} = {
-  nodes: [
-    {
-      id: "dev-1",
-      type: "routerNode",
-      position: { x: 0, y: 0 },
-      data: {
-        label: "CCR2004-16G-2S+",
-        name: "CCR2004-16G-2S+",
-        role: "router",
-        vendor: "MikroTik",
-        model: "CCR2004-16G-2S+",
-        ip_address: "10.10.0.1",
-        mac_address: "64:D1:54:00:00:01",
-        cpu_usage: 18,
-        ram_usage: 39,
-        uptime: 1231200,
-        wan_rx_mbps: 365.4,
-        wan_tx_mbps: 205.1,
-        lan_tx_mbps: 570.5,
-        is_online: true,
-      },
-    },
-    {
-      id: "dev-2",
-      type: "switchNode",
-      position: { x: 0, y: 0 },
-      data: {
-        label: "Core-SW-01",
-        name: "Core-SW-01",
-        role: "managed_switch",
-        vendor: "Ruijie",
-        model: "RG-S5310-24GT4XS",
-        ip_address: "10.10.0.2",
-        mac_address: "00:D0:F8:00:01:01",
-        cpu_usage: 14,
-        ram_usage: 32,
-        total_ports: 24,
-        connected_count: 8,
-        is_online: true,
-        ports: [
-          { port_index: 1, port_name: "Gi0/1", status: "up", speed: "1G", vlan_id: 10 },
-          { port_index: 2, port_name: "Gi0/2", status: "up", speed: "1G", vlan_id: 1, is_uplink: true },
-          { port_index: 3, port_name: "Gi0/3", status: "up", speed: "1G", vlan_id: 20 },
-          { port_index: 24, port_name: "Te0/24", status: "up", speed: "10G", vlan_id: 1, is_uplink: true },
-        ],
-      },
-    },
-    {
-      id: "dev-3",
-      type: "switchNode",
-      position: { x: 0, y: 0 },
-      data: {
-        label: "Access-SW-CCTV",
-        name: "Access-SW-CCTV",
-        role: "managed_switch",
-        vendor: "Hikvision",
-        model: "DS-3E1526P-EI",
-        ip_address: "10.10.0.3",
-        mac_address: "BC:AD:28:00:02:02",
-        cpu_usage: 22,
-        ram_usage: 41,
-        total_ports: 24,
-        connected_count: 12,
-        is_online: true,
-        ports: [
-          { port_index: 1, port_name: "Gi0/1", status: "up", speed: "100M", vlan_id: 10 },
-          { port_index: 2, port_name: "Gi0/2", status: "up", speed: "1G", vlan_id: 10 },
-          { port_index: 5, port_name: "Gi0/5", status: "up", speed: "1G", vlan_id: 20 },
-          { port_index: 24, port_name: "Gi0/24", status: "up", speed: "1G", vlan_id: 1, is_uplink: true },
-        ],
-      },
-    },
-    {
-      id: "dev-4",
-      type: "endpointNode",
-      position: { x: 0, y: 0 },
-      data: {
-        label: "Hikvision-NVR-01",
-        name: "Hikvision-NVR-01",
-        role: "nvr",
-        vendor: "Hikvision",
-        ip_address: "10.10.10.50",
-        mac_address: "4C:0F:6E:10:20:30",
-        vlan_id: 10,
-        channels: "32 CH",
-        is_online: true,
-      },
-    },
-    {
-      id: "dev-5",
-      type: "endpointNode",
-      position: { x: 0, y: 0 },
-      data: {
-        label: "Floor1-AP-Aruba",
-        name: "Floor1-AP-Aruba",
-        role: "ap",
-        vendor: "Aruba",
-        ip_address: "10.10.20.15",
-        mac_address: "24:DE:C6:11:22:33",
-        vlan_id: 20,
-        channels: "Wi-Fi 6",
-        is_online: true,
-      },
-    },
-    {
-      id: "dev-6",
-      type: "endpointNode",
-      position: { x: 0, y: 0 },
-      data: {
-        label: "Gate-Cam-01",
-        name: "Gate-Cam-01",
-        role: "camera",
-        vendor: "Hikvision",
-        ip_address: "10.10.10.101",
-        mac_address: "BC:AD:28:00:11:01",
-        vlan_id: 10,
-        channels: "CH-01",
-        is_online: true,
-      },
-    },
-    {
-      id: "dev-7",
-      type: "unmanagedGroupNode",
-      position: { x: 0, y: 0 },
-      data: {
-        label: "Chưa xác định switch hoặc AP (Access-SW-CCTV:Gi0/2)",
-        name: "Chưa xác định switch hoặc AP",
-        role: "unmanaged_group",
-        vendor: "Unmanaged",
-        ip_address: "Access-SW-CCTV : Gi0/2",
-        upstream_port_label: "Access-SW-CCTV : Port 2 (VLAN 10)",
-        is_online: true,
-        group_items: [
-          {
-            name: "Lobby-Cam-02",
-            ip_address: "10.10.10.102",
-            mac_address: "BC:AD:28:00:11:02",
-            vendor: "Hikvision",
-            role: "camera",
-            vlan_id: 10,
-          },
-          {
-            name: "Parking-Cam-03",
-            ip_address: "10.10.10.103",
-            mac_address: "BC:AD:28:00:11:03",
-            vendor: "Hikvision",
-            role: "camera",
-            vlan_id: 10,
-          },
-          {
-            name: "Rogue-Tenda-AP",
-            ip_address: "10.10.10.199",
-            mac_address: "C8:3A:35:99:88:77",
-            vendor: "Tenda",
-            role: "ap",
-            vlan_id: 10,
-          },
-        ],
-      },
-    },
-    {
-      id: "dev-8",
-      type: "endpointNode",
-      position: { x: 0, y: 0 },
-      data: {
-        label: "Lobby-Cam-02",
-        name: "Lobby-Cam-02",
-        role: "camera",
-        vendor: "Hikvision",
-        ip_address: "10.10.10.102",
-        mac_address: "BC:AD:28:00:11:02",
-        vlan_id: 10,
-        channels: "CH-02",
-        is_online: true,
-      },
-    },
-    {
-      id: "dev-9",
-      type: "endpointNode",
-      position: { x: 0, y: 0 },
-      data: {
-        label: "Rogue-Tenda-AP",
-        name: "Rogue-Tenda-AP",
-        role: "ap",
-        vendor: "Tenda",
-        ip_address: "10.10.10.199",
-        mac_address: "C8:3A:35:99:88:77",
-        vlan_id: 10,
-        channels: "ROGUE",
-        is_online: true,
-      },
-    },
-  ],
-  edges: [
-    {
-      id: "e1-2",
-      source: "dev-1",
-      target: "dev-2",
-      label: "P1 -> P24 (10G Trunk)",
-      data: { link_type: "trunk", speed: "10G", source_port: 1, target_port: 24 },
-    },
-    {
-      id: "e2-3",
-      source: "dev-2",
-      target: "dev-3",
-      label: "P2 -> P24 (1G Trunk)",
-      data: { link_type: "trunk", speed: "1G", source_port: 2, target_port: 24 },
-    },
-    {
-      id: "e2-4",
-      source: "dev-2",
-      target: "dev-4",
-      label: "P1 -> eth0 (1G)",
-      data: { link_type: "access", speed: "1G", source_port: 1, target_port: 1, vlan_id: 10 },
-    },
-    {
-      id: "e2-5",
-      source: "dev-2",
-      target: "dev-5",
-      label: "P3 -> eth0 (1G)",
-      data: { link_type: "access", speed: "1G", source_port: 3, target_port: 1, vlan_id: 20 },
-    },
-    {
-      id: "e3-6",
-      source: "dev-3",
-      target: "dev-6",
-      label: "P1 -> eth0 (100M)",
-      data: { link_type: "access", speed: "100M", source_port: 1, target_port: 1, vlan_id: 10 },
-    },
-    {
-      id: "e3-7",
-      source: "dev-3",
-      target: "dev-7",
-      label: "P2 -> Hub (Unmanaged)",
-      data: { link_type: "unmanaged", speed: "1G", source_port: 2, target_port: 0, vlan_id: 10 },
-    },
-    {
-      id: "e7-8",
-      source: "dev-7",
-      target: "dev-8",
-      label: "Hub -> Cam-02",
-      data: { link_type: "unmanaged", speed: "100M", source_port: 1, target_port: 1, vlan_id: 10 },
-    },
-    {
-      id: "e7-9",
-      source: "dev-7",
-      target: "dev-9",
-      label: "Hub -> Rogue-Tenda",
-      data: { link_type: "unmanaged", speed: "100M", source_port: 2, target_port: 1, vlan_id: 10 },
-    },
-  ],
-  alerts: [
-    {
-      id: 1,
-      severity: "critical",
-      port_index: 2,
-      message:
-        "Phát hiện thiết bị Router/AP dân dụng lạ (Tenda - MAC C8:3A:35:99:88:77) cắm vào cổng Camera/CCTV Access-SW-CCTV:Gi0/2",
-    },
-    {
-      id: 2,
-      severity: "warning",
-      message: "Cảnh báo đầy tải DHCP VLAN 10: đã cấp 235/254 IP (92.5% > 90%)",
-    },
-  ],
-};
-
 function mapRoleToNodeType(role?: string): string {
   switch (role) {
     case "router":
@@ -408,6 +136,7 @@ export default function SiteNocDashboardPage() {
   const [wanSeries, setWanSeries] = useState(INITIAL_WAN_SERIES);
   const [remoteModalMode, setRemoteModalMode] = useState<"site" | "device" | null>(null);
   const [sitesList, setSitesList] = useState<Array<{ id: number; name: string; subnet: string }>>([]);
+  const [notifyBanner, setNotifyBanner] = useState<{ notification: boolean; message: string } | null>(null);
 
   const loadSitesList = useCallback(async () => {
     try {
@@ -466,17 +195,28 @@ export default function SiteNocDashboardPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({}),
       });
-      if (res.ok) {
-        const data = await res.json();
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.notification !== false) {
         const normalized = normalizeIncomingGraph(data.nodes || [], data.edges || []);
         setRawNodes(normalized.nodes);
         setRawEdges(normalized.edges);
         if (Array.isArray(data.alerts)) setAlerts(data.alerts);
+        setNotifyBanner({
+          notification: true,
+          message: `Quét thành công ${normalized.nodes.length} thiết bị.`,
+        });
       } else {
-        await loadTopology();
+        setNotifyBanner({
+          notification: false,
+          message: data.detail || "Quét không có kết quả (notification: false). Vui lòng nhập IP Router/Switch thực tế.",
+        });
+        setRemoteModalMode("device");
       }
     } catch {
-      await loadTopology();
+      setNotifyBanner({
+        notification: false,
+        message: "Không kết nối được tới Backend API (notification: false).",
+      });
     } finally {
       setScanning(false);
     }
@@ -885,6 +625,37 @@ export default function SiteNocDashboardPage() {
 
       {/* 3. Main Interactive Topology Canvas + Slide-Over Inspector Drawer */}
       <div className="relative flex-1 overflow-hidden">
+        {/* Scan / Action Notification Banner */}
+        {notifyBanner && (
+          <div
+            className={`absolute right-4 top-4 z-20 flex max-w-lg items-center justify-between gap-3 rounded-xl border px-4 py-2.5 text-xs shadow-2xl backdrop-blur ${
+              notifyBanner.notification
+                ? "border-emerald-500/50 bg-emerald-950/90 text-emerald-200"
+                : "border-rose-500/60 bg-rose-950/95 text-rose-200"
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              {notifyBanner.notification ? (
+                <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-emerald-400" />
+              ) : (
+                <AlertTriangle className="h-4 w-4 flex-shrink-0 text-rose-400" />
+              )}
+              <div>
+                <span className="font-mono font-bold uppercase">
+                  {notifyBanner.notification ? "[notification: true] " : "[notification: false] "}
+                </span>
+                <span>{notifyBanner.message}</span>
+              </div>
+            </div>
+            <button
+              onClick={() => setNotifyBanner(null)}
+              className="rounded p-1 text-slate-300 hover:bg-slate-800 hover:text-white"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        )}
+
         {/* Alert Banner Floating Pill */}
         {alerts.length > 0 && (
           <div className="absolute left-4 top-4 z-10 max-w-xl space-y-1.5">
@@ -996,15 +767,37 @@ export default function SiteNocDashboardPage() {
                 )}
               </div>
 
-              {/* VLAN & Device Details */}
+              {/* VLAN & Device Hardware Telemetry */}
               <div className="rounded-xl border border-slate-800 bg-slate-950/80 p-3 space-y-1.5">
                 <p className="font-semibold uppercase tracking-wider text-slate-300">
-                  Thông số kỹ thuật & VLAN
+                  Thông số phần cứng & VLAN
                 </p>
                 <div className="flex justify-between text-slate-400">
-                  <span>Phân loại:</span>
-                  <span className="font-medium text-slate-200">
-                    {selectedNode.data.role}
+                  <span>Model / Firmware:</span>
+                  <span className="font-medium text-slate-200 text-right">
+                    {selectedNode.data.model || selectedNode.data.vendor || selectedNode.data.role}
+                  </span>
+                </div>
+                <div className="flex justify-between text-slate-400">
+                  <span>CPU / RAM:</span>
+                  <span className="font-mono text-cyan-300">
+                    {Number(selectedNode.data.cpu_usage || 0) > 0
+                      ? `${Number(selectedNode.data.cpu_usage).toFixed(0)}% CPU`
+                      : "CPU: (Bật SNMP)"}{" "}
+                    •{" "}
+                    {Number(selectedNode.data.ram_usage || 0) > 0
+                      ? `${Number(selectedNode.data.ram_usage).toFixed(0)}% RAM`
+                      : "RAM: (Bật SNMP)"}
+                  </span>
+                </div>
+                <div className="flex justify-between text-slate-400">
+                  <span>Thời gian chạy (Uptime):</span>
+                  <span className="font-mono text-emerald-300">
+                    {selectedNode.data.uptime && selectedNode.data.uptime > 0
+                      ? `${Math.floor(selectedNode.data.uptime / 86400)}d ${Math.floor(
+                          (selectedNode.data.uptime % 86400) / 3600
+                        )}h ${Math.floor((selectedNode.data.uptime % 3600) / 60)}m`
+                      : "Đang hoạt động"}
                   </span>
                 </div>
                 <div className="flex justify-between text-slate-400">
@@ -1022,6 +815,52 @@ export default function SiteNocDashboardPage() {
                   </span>
                 </div>
               </div>
+
+              {/* Physical Ports Status List */}
+              {Array.isArray(selectedNode.data.ports) && selectedNode.data.ports.length > 0 && (
+                <div className="rounded-xl border border-slate-800 bg-slate-950/80 p-3 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <p className="font-semibold uppercase tracking-wider text-slate-300">
+                      Danh sách Cổng (Port đang cắm)
+                    </p>
+                    <span className="rounded bg-emerald-500/20 px-1.5 py-0.5 font-mono text-[10px] font-bold text-emerald-300">
+                      {selectedNode.data.ports.filter((p) => p.status === "up").length}/
+                      {selectedNode.data.ports.length} UP
+                    </span>
+                  </div>
+                  <div className="space-y-1.5">
+                    {selectedNode.data.ports.map((p) => {
+                      const isUp = p.status === "up";
+                      return (
+                        <div
+                          key={p.port_index}
+                          className={`rounded-lg border px-2.5 py-1.5 font-mono text-[11px] ${
+                            p.is_uplink
+                              ? "border-cyan-500/40 bg-cyan-950/30 text-cyan-200"
+                              : isUp
+                              ? "border-emerald-500/40 bg-emerald-950/30 text-emerald-200"
+                              : "border-slate-800 bg-slate-900/50 text-slate-500"
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="font-semibold">
+                              {p.port_name} {p.is_uplink ? "(UPLINK)" : ""}
+                            </span>
+                            <span className="text-[10px]">
+                              {isUp ? `UP (${p.speed || "1G"})` : "DOWN"}
+                            </span>
+                          </div>
+                          {p.connected_label && (
+                            <p className="mt-0.5 truncate font-sans text-[10px] text-slate-300">
+                              ↳ Kết nối: <span className="font-semibold text-white">{p.connected_label}</span>
+                            </p>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="mt-4 space-y-2 border-t border-slate-800 pt-3">
@@ -1066,6 +905,9 @@ export default function SiteNocDashboardPage() {
               if (Array.isArray(data.alerts)) {
                 setAlerts(data.alerts as AlertItem[]);
               }
+            }}
+            onNotify={(notification, message) => {
+              setNotifyBanner({ notification, message });
             }}
           />
         )}

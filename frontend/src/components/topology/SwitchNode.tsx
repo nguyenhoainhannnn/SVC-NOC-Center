@@ -18,9 +18,9 @@ function buildDefaultPorts(
       result.push({
         port_index: i,
         port_name: `Gi0/${i}`,
-        status: i <= 6 || i === total ? "up" : "down",
-        speed: i === 2 ? "100M" : i === total ? "10G" : "1G",
-        is_uplink: i === total,
+        status: "down",
+        speed: "1G",
+        is_uplink: false,
       });
     }
   }
@@ -58,10 +58,10 @@ export function SwitchNode({ data }: NodeProps) {
           <div>
             <div className="flex items-center gap-1.5">
               <span className="rounded bg-sky-500/20 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-sky-300">
-                {d.vendor || "Ruijie"}
+                {d.vendor || "Switch"}
               </span>
               <span className="text-[11px] text-slate-400">
-                {d.model || "RG-S5310-24GT4XS"}
+                {d.model || ""}
               </span>
             </div>
             <p className="text-sm font-semibold text-slate-100">

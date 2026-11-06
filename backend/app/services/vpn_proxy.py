@@ -6,18 +6,27 @@ from typing import Any
 from ..collectors.hikvision_isapi import HikvisionISAPICollector
 
 
-def validate_lan_target_ip(target_ip: str) -> str:
+def validate_lan_target_ip(target_ip: str, allow_public: bool = True) -> str:
     """
-    Validate at the trust boundary that `target_ip` is strictly a private RFC1918
-    LAN/VPN IPv4 address (e.g. 10.x.x.x, 172.16-31.x.x, 192.168.x.x).
-    Blocks loopback (127.0.0.0/8), link-local/cloud metadata (169.254.0.0/16), and public IPs.
+    Validate at the trust boundary that `target_ip` is a valid unicast IPv4 host address
+    (supports LAN/VPN RFC1918, CGNAT/Tailscale, and Public WAN IPs when allow_public=True).
+    Strictly blocks loopback (127.0.0.0/8), link-local/cloud metadata (169.254.0.0/16),
+    multicast, unspecified (0.0.0.0), and subnet broadcast (.255) addresses.
     """
+    raw = target_ip.strip()
     try:
-        ip = ipaddress.ip_address(target_ip.strip())
+        ip = ipaddress.ip_address(raw)
     except ValueError as exc:
-        raise ValueError(f"Invalid IP address: {target_ip}") from exc
+        raise ValueError(f"Địa chỉ IP không đúng định dạng: {target_ip}") from exc
 
-    if ip.version != 4 or not ip.is_private or ip.is_loopback or ip.is_link_local or ip.is_multicast:
+    if ip.version != 4 or ip.is_loopback or ip.is_link_local or ip.is_multicast or ip.is_unspecified:
+        raise ValueError(f"Địa chỉ IP {target_ip} thuộc dải bị cấm (loopback/link-local/multicast)")
+
+    octets = str(ip).split(".")
+    if octets[-1] == "255" or str(ip) == "255.255.255.255":
+        raise ValueError(f"Địa chỉ IP {target_ip} là địa chỉ Broadcast (.255), không phải IP của thiết bị")
+
+    if not allow_public and not ip.is_private:
         raise ValueError(f"Target IP {target_ip} is not an allowed private LAN/VPN IPv4 address")
     return str(ip)
 
@@ -65,14 +74,28 @@ def proxy_http_via_vpn(
             for k, v in (headers or {}).items()
             if k.lower() not in {"host", "content-length", "connection", "accept-encoding"}
         }
-        resp = requests.request(
-            method=method.upper(),
-            url=target_url,
-            headers=req_headers,
-            data=body,
-            timeout=timeout,
-            allow_redirects=False,
-        )
+        try:
+            resp = requests.request(
+                method=method.upper(),
+                url=target_url,
+                headers=req_headers,
+                data=body,
+                timeout=timeout,
+                allow_redirects=False,
+            )
+        except Exception:
+            https_url = f"https://{clean_ip}/{clean_path}"
+            if query_string:
+                https_url = f"{https_url}?{query_string}"
+            resp = requests.request(
+                method=method.upper(),
+                url=https_url,
+                headers=req_headers,
+                data=body,
+                timeout=timeout,
+                allow_redirects=False,
+                verify=False,
+            )
         content_type = resp.headers.get("Content-Type", "text/html; charset=utf-8")
         content = resp.content
         if "text/html" in content_type.lower():

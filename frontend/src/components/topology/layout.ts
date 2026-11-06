@@ -3,7 +3,7 @@ import { Edge, Node, Position } from "@xyflow/react";
 import { NocEdgeData, NocNodeData, PathHop } from "./types";
 
 const NODE_DIMENSIONS: Record<string, { width: number; height: number }> = {
-  routerNode: { width: 290, height: 185 },
+  routerNode: { width: 325, height: 260 },
   switchNode: { width: 350, height: 225 },
   unmanagedGroupNode: { width: 300, height: 190 },
   endpointNode: { width: 235, height: 84 },
